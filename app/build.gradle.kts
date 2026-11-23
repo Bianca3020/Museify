@@ -22,7 +22,7 @@ fun loadJamendoClientId(): String {
             }
         }
     }
-    return ""
+    return "56d30c95"
 }
 
 android {

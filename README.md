@@ -8,6 +8,18 @@
 
 ---
 
+## 📸 Screenshots Aplikasi
+
+| Dashboard (Home) | Now Playing | Detail Lagu & Lisensi |
+|:---:|:---:|:---:|
+| <img src="screenshots/01_dashboard.png" width="220" /> | <img src="screenshots/02_now_playing.png" width="220" /> | <img src="screenshots/03_song_details.png" width="220" /> |
+
+| Pencarian Musik | Lagu Favorit (Room) | Mode Terang & Gelap |
+|:---:|:---:|:---:|
+| <img src="screenshots/04_search.png" width="220" /> | <img src="screenshots/05_favorites.png" width="220" /> | <img src="screenshots/07_light_mode.png" width="220" /> |
+
+---
+
 ## 📱 Fitur Utama
 
 ### 1. Dashboard Interaktif (Halaman Utama)
