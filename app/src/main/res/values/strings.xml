@@ -1,3 +1,103 @@
 <resources>
     <string name="app_name">Museify</string>
+    <string name="app_tagline">Your music, your discovery.</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_back">Back</string>
+
+    <!-- Greetings & Home -->
+    <string name="greeting_morning">Good morning</string>
+    <string name="greeting_afternoon">Good afternoon</string>
+    <string name="greeting_evening">Good evening</string>
+    <string name="home_subtitle">Discover independent music streaming free via Jamendo</string>
+    <string name="home_search_prompt">Search songs, artists, or genres…</string>
+    <string name="section_featured">Featured Tracks</string>
+    <string name="section_recommended">Recommended for You</string>
+    <string name="section_curated">Curated Discovery</string>
+    <string name="section_recently_played">Recently Played</string>
+    <string name="home_empty_title">No tracks available</string>
+    <string name="home_empty_message">Pull to refresh or tap retry to load tracks from Jamendo.</string>
+
+    <!-- Search -->
+    <string name="search_title">Search Music</string>
+    <string name="search_placeholder">Search by song title or artist…</string>
+    <string name="search_clear">Clear search</string>
+    <string name="search_initial_title">Find your next favorite track</string>
+    <string name="search_initial_subtitle">Type a song title, artist name, or mood to explore Jamendo.</string>
+    <string name="search_empty_title">No results found</string>
+    <string name="search_empty_message">Try another keyword, song title, or artist name.</string>
+    <string name="search_results_count">%1$d tracks found</string>
+
+    <!-- Song Details & Licensing -->
+    <string name="song_details_title">Song Details</string>
+    <string name="song_details_album">Album</string>
+    <string name="song_details_duration">Duration</string>
+    <string name="song_details_source">Music Source</string>
+    <string name="song_details_source_value">Jamendo Music Catalog</string>
+    <string name="song_details_license">License</string>
+    <string name="song_details_attribution">Attribution</string>
+    <string name="song_details_attribution_text">Streamed from Jamendo under the track\'s Creative Commons license. Rights remain with %1$s.</string>
+    <string name="song_details_unknown_album">Single / Unknown Album</string>
+    <string name="song_details_unknown_artist">Independent Artist</string>
+    <string name="song_details_unknown_license">Standard Jamendo Streaming License</string>
+    <string name="action_play_now">Play Track</string>
+    <string name="action_view_details">Track Details</string>
+    <string name="action_add_favorite">Add to Favorites</string>
+    <string name="action_remove_favorite">Remove from Favorites</string>
+
+    <!-- Player & Mini Player -->
+    <string name="now_playing_title">Now Playing</string>
+    <string name="player_play">Play</string>
+    <string name="player_pause">Pause</string>
+    <string name="player_next">Next track</string>
+    <string name="player_previous">Previous track</string>
+    <string name="player_buffering">Loading audio…</string>
+    <string name="player_no_track">No track selected</string>
+    <string name="player_unavailable_audio">Streaming audio is unavailable for this track.</string>
+    <string name="player_playback_error">Unable to play this track. Please try again or pick another song.</string>
+    <string name="cd_album_artwork">Album artwork for %1$s</string>
+    <string name="cd_open_now_playing">Open Now Playing screen</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Your Favorites</string>
+    <string name="favorites_empty_title">No favorite songs yet</string>
+    <string name="favorites_empty_message">Tap the heart icon on any song to save it here for quick listening.</string>
+    <string name="favorites_count">%1$d saved tracks</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance_section">Appearance</string>
+    <string name="settings_theme_label">Theme</string>
+    <string name="settings_theme_system">System Default</string>
+    <string name="settings_theme_system_desc">Follow your device\'s light or dark mode</string>
+    <string name="settings_theme_light">Light Mode</string>
+    <string name="settings_theme_light_desc">Ice mint canvas with deep slate accents</string>
+    <string name="settings_theme_dark">Dark Mode</string>
+    <string name="settings_theme_dark_desc">Midnight navy canvas with electric aqua accents</string>
+    <string name="settings_language_section">Language</string>
+    <string name="settings_language_label">App Language</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_indonesian">Bahasa Indonesia</string>
+    <string name="settings_about_section">About Museify</string>
+    <string name="settings_about_version">Version %1$s</string>
+    <string name="settings_about_description">Museify is an independent music discovery and streaming app built with Jetpack Compose and Material 3.</string>
+    <string name="settings_about_source_title">Powered by Jamendo API</string>
+    <string name="settings_about_source_desc">Music metadata, artwork, and streams are provided by Jamendo under Creative Commons and Jamendo streaming terms.</string>
+
+    <!-- States & Errors -->
+    <string name="state_loading">Loading music…</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_ok">OK</string>
+    <string name="error_network">No internet connection. Please check your network and try again.</string>
+    <string name="error_timeout">The request took too long. Please try again.</string>
+    <string name="error_api_credentials">Jamendo Client ID is missing or invalid. Please configure your local Jamendo Client ID.</string>
+    <string name="error_generic">Something went wrong while loading music. Please try again.</string>
+    <string name="error_database">Could not update favorites right now. Please try again.</string>
+
+    <!-- Foundation Phase Label -->
+    <string name="foundation_ready_label">Design System &amp; Localization Ready</string>
 </resources>

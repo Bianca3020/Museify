@@ -1,0 +1,103 @@
+<resources>
+    <string name="app_name">Museify</string>
+    <string name="app_tagline">Musikmu, penemuanmu.</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Beranda</string>
+    <string name="nav_search">Cari</string>
+    <string name="nav_favorites">Favorit</string>
+    <string name="nav_settings">Pengaturan</string>
+    <string name="nav_back">Kembali</string>
+
+    <!-- Greetings & Home -->
+    <string name="greeting_morning">Selamat pagi</string>
+    <string name="greeting_afternoon">Selamat siang</string>
+    <string name="greeting_evening">Selamat malam</string>
+    <string name="home_subtitle">Temukan musik independen gratis melalui Jamendo</string>
+    <string name="home_search_prompt">Cari judul lagu, artis, atau genre…</string>
+    <string name="section_featured">Lagu Pilihan</string>
+    <string name="section_recommended">Rekomendasi Untukmu</string>
+    <string name="section_curated">Kurasi Penemuan</string>
+    <string name="section_recently_played">Baru Diputar</string>
+    <string name="home_empty_title">Belum ada lagu tersedia</string>
+    <string name="home_empty_message">Tarik untuk menyegarkan atau ketuk coba lagi untuk memuat lagu dari Jamendo.</string>
+
+    <!-- Search -->
+    <string name="search_title">Cari Musik</string>
+    <string name="search_placeholder">Cari judul lagu atau nama artis…</string>
+    <string name="search_clear">Hapus pencarian</string>
+    <string name="search_initial_title">Temukan lagu favorit barumu</string>
+    <string name="search_initial_subtitle">Ketik judul lagu, nama artis, atau suasana untuk menjelajahi Jamendo.</string>
+    <string name="search_empty_title">Hasil tidak ditemukan</string>
+    <string name="search_empty_message">Coba kata kunci, judul lagu, atau nama artis lainnya.</string>
+    <string name="search_results_count">%1$d lagu ditemukan</string>
+
+    <!-- Song Details & Licensing -->
+    <string name="song_details_title">Detail Lagu</string>
+    <string name="song_details_album">Album</string>
+    <string name="song_details_duration">Durasi</string>
+    <string name="song_details_source">Sumber Musik</string>
+    <string name="song_details_source_value">Katalog Musik Jamendo</string>
+    <string name="song_details_license">Lisensi</string>
+    <string name="song_details_attribution">Atribusi</string>
+    <string name="song_details_attribution_text">Diputar dari Jamendo di bawah lisensi Creative Commons lagu ini. Hak cipta tetap dimiliki oleh %1$s.</string>
+    <string name="song_details_unknown_album">Singel / Album Tidak Diketahui</string>
+    <string name="song_details_unknown_artist">Artis Independen</string>
+    <string name="song_details_unknown_license">Lisensi Streaming Standar Jamendo</string>
+    <string name="action_play_now">Putar Lagu</string>
+    <string name="action_view_details">Detail Lagu</string>
+    <string name="action_add_favorite">Tambah ke Favorit</string>
+    <string name="action_remove_favorite">Hapus dari Favorit</string>
+
+    <!-- Player & Mini Player -->
+    <string name="now_playing_title">Sedang Diputar</string>
+    <string name="player_play">Putar</string>
+    <string name="player_pause">Jeda</string>
+    <string name="player_next">Lagu berikutnya</string>
+    <string name="player_previous">Lagu sebelumnya</string>
+    <string name="player_buffering">Memuat audio…</string>
+    <string name="player_no_track">Belum ada lagu dipilih</string>
+    <string name="player_unavailable_audio">Audio streaming tidak tersedia untuk lagu ini.</string>
+    <string name="player_playback_error">Tidak dapat memutar lagu ini. Silakan coba lagi atau pilih lagu lain.</string>
+    <string name="cd_album_artwork">Sampul album untuk %1$s</string>
+    <string name="cd_open_now_playing">Buka layar Sedang Diputar</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Lagu Favoritmu</string>
+    <string name="favorites_empty_title">Belum ada lagu favorit</string>
+    <string name="favorites_empty_message">Ketuk ikon hati pada lagu mana saja untuk menyimpannya di sini.</string>
+    <string name="favorites_count">%1$d lagu tersimpan</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Pengaturan</string>
+    <string name="settings_appearance_section">Tampilan</string>
+    <string name="settings_theme_label">Tema</string>
+    <string name="settings_theme_system">Ikuti Sistem</string>
+    <string name="settings_theme_system_desc">Mengikuti mode terang atau gelap perangkat Anda</string>
+    <string name="settings_theme_light">Mode Terang</string>
+    <string name="settings_theme_light_desc">Latar ice mint dengan aksen slate biru</string>
+    <string name="settings_theme_dark">Mode Gelap</string>
+    <string name="settings_theme_dark_desc">Latar midnight navy dengan aksen electric aqua</string>
+    <string name="settings_language_section">Bahasa</string>
+    <string name="settings_language_label">Bahasa Aplikasi</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_indonesian">Bahasa Indonesia</string>
+    <string name="settings_about_section">Tentang Museify</string>
+    <string name="settings_about_version">Versi %1$s</string>
+    <string name="settings_about_description">Museify adalah aplikasi penemuan dan streaming musik independen yang dibangun dengan Jetpack Compose dan Material 3.</string>
+    <string name="settings_about_source_title">Didukung oleh Jamendo API</string>
+    <string name="settings_about_source_desc">Metadata musik, sampul album, dan streaming disediakan oleh Jamendo di bawah lisensi Creative Commons dan ketentuan streaming Jamendo.</string>
+
+    <!-- States & Errors -->
+    <string name="state_loading">Memuat musik…</string>
+    <string name="action_retry">Coba Lagi</string>
+    <string name="action_ok">Oke</string>
+    <string name="error_network">Tidak ada koneksi internet. Periksa jaringan Anda lalu coba lagi.</string>
+    <string name="error_timeout">Permintaan memakan waktu terlalu lama. Silakan coba lagi.</string>
+    <string name="error_api_credentials">Client ID Jamendo tidak ditemukan atau tidak valid. Harap atur Client ID Jamendo lokal Anda.</string>
+    <string name="error_generic">Terjadi kesalahan saat memuat musik. Silakan coba lagi.</string>
+    <string name="error_database">Tidak dapat memperbarui favorit saat ini. Silakan coba lagi.</string>
+
+    <!-- Foundation Phase Label -->
+    <string name="foundation_ready_label">Sistem Desain &amp; Lokalisasi Siap</string>
+</resources>
