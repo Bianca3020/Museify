@@ -1,6 +1,7 @@
 package com.biancaputri.museify.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.biancaputri.museify.R
 import com.biancaputri.museify.data.model.Song
@@ -35,6 +38,7 @@ import com.biancaputri.museify.ui.components.MuseifyBrandHeader
 import com.biancaputri.museify.ui.components.MuseifySearchTriggerBar
 import com.biancaputri.museify.ui.components.SongListItem
 import com.biancaputri.museify.ui.components.SongRowActions
+import com.biancaputri.museify.ui.util.computeAdaptiveLayoutSpec
 import com.biancaputri.museify.ui.util.greetingResForHour
 import com.biancaputri.museify.ui.util.toStringRes
 import com.biancaputri.museify.viewmodel.HomeUiState
@@ -56,175 +60,204 @@ fun HomeScreen(
 ) {
     val currentHour = remember { Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
 
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        item(key = "home_header") {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    MuseifyBrandHeader(modifier = Modifier.weight(1f))
-                    IconButton(onClick = onSettingsClick) {
-                        Icon(
-                            imageVector = Icons.Rounded.Settings,
-                            contentDescription = stringResource(R.string.nav_settings),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(18.dp))
-                Text(
-                    text = stringResource(greetingResForHour(currentHour)),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.home_subtitle),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                MuseifySearchTriggerBar(onClick = onSearchClick)
-            }
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val layoutSpec = computeAdaptiveLayoutSpec(
+            widthDp = maxWidth.value.toInt(),
+            heightDp = maxHeight.value.toInt()
+        )
+        val horizontalPadding = layoutSpec.horizontalPadding
+        val curatedRows = remember(homeState.curatedSongs, layoutSpec.listColumns) {
+            homeState.curatedSongs.chunked(layoutSpec.listColumns)
         }
 
-        when {
-            homeState.isLoading -> {
-                item(key = "home_loading") {
-                    LoadingState(modifier = Modifier.padding(top = 32.dp))
-                }
-            }
-            homeState.error != null -> {
-                item(key = "home_error") {
-                    ErrorStateView(
-                        message = stringResource(homeState.error.toStringRes()),
-                        onRetry = onRetry,
-                        modifier = Modifier.padding(top = 24.dp)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            item(key = "home_header") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = horizontalPadding)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        MuseifyBrandHeader(modifier = Modifier.weight(1f))
+                        IconButton(onClick = onSettingsClick) {
+                            Icon(
+                                imageVector = Icons.Rounded.Settings,
+                                contentDescription = stringResource(R.string.nav_settings),
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(18.dp))
+                    Text(
+                        text = stringResource(greetingResForHour(currentHour)),
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.semantics { heading() }
                     )
-                }
-            }
-            homeState.isEmpty -> {
-                item(key = "home_empty") {
-                    EmptyStateView(
-                        title = stringResource(R.string.home_empty_title),
-                        message = stringResource(R.string.home_empty_message),
-                        actionLabel = stringResource(R.string.action_retry),
-                        onAction = onRetry,
-                        modifier = Modifier.padding(top = 24.dp)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(R.string.home_subtitle),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    MuseifySearchTriggerBar(onClick = onSearchClick)
                 }
             }
-            else -> {
-                if (homeState.featuredSongs.isNotEmpty()) {
-                    item(key = "featured_section") {
-                        SectionHeader(
-                            title = stringResource(R.string.section_featured),
-                            modifier = Modifier.padding(horizontal = 20.dp)
+
+            when {
+                homeState.isLoading -> {
+                    item(key = "home_loading") {
+                        LoadingState(modifier = Modifier.padding(top = 32.dp))
+                    }
+                }
+                homeState.error != null -> {
+                    item(key = "home_error") {
+                        ErrorStateView(
+                            message = stringResource(homeState.error.toStringRes()),
+                            onRetry = onRetry,
+                            modifier = Modifier.padding(top = 24.dp)
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = 20.dp),
-                            horizontalArrangement = Arrangement.spacedBy(14.dp)
-                        ) {
-                            items(
-                                items = homeState.featuredSongs,
-                                key = { "featured_${it.id}" }
-                            ) { song ->
-                                FeaturedSongCard(
-                                    song = song,
-                                    isActive = song.id == activeSongId,
-                                    onClick = { onSongPlay(song, homeState.featuredSongs) }
-                                )
+                    }
+                }
+                homeState.isEmpty -> {
+                    item(key = "home_empty") {
+                        EmptyStateView(
+                            title = stringResource(R.string.home_empty_title),
+                            message = stringResource(R.string.home_empty_message),
+                            actionLabel = stringResource(R.string.action_retry),
+                            onAction = onRetry,
+                            modifier = Modifier.padding(top = 24.dp)
+                        )
+                    }
+                }
+                else -> {
+                    if (homeState.featuredSongs.isNotEmpty()) {
+                        item(key = "featured_section") {
+                            SectionHeader(
+                                title = stringResource(R.string.section_featured),
+                                modifier = Modifier.padding(horizontal = horizontalPadding)
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = horizontalPadding),
+                                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                            ) {
+                                items(
+                                    items = homeState.featuredSongs,
+                                    key = { "featured_${it.id}" }
+                                ) { song ->
+                                    FeaturedSongCard(
+                                        song = song,
+                                        isActive = song.id == activeSongId,
+                                        cardWidth = layoutSpec.featuredCardWidth,
+                                        onClick = { onSongPlay(song, homeState.featuredSongs) }
+                                    )
+                                }
                             }
                         }
                     }
-                }
 
-                if (recentSongs.isNotEmpty()) {
-                    item(key = "recent_section") {
-                        SectionHeader(
-                            title = stringResource(R.string.section_recently_played),
-                            modifier = Modifier.padding(horizontal = 20.dp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = 20.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(
-                                items = recentSongs,
-                                key = { "recent_${it.id}" }
-                            ) { song ->
-                                CompactSongCard(
-                                    song = song,
-                                    isActive = song.id == activeSongId,
-                                    onClick = { onSongPlay(song, recentSongs) }
-                                )
+                    if (recentSongs.isNotEmpty()) {
+                        item(key = "recent_section") {
+                            SectionHeader(
+                                title = stringResource(R.string.section_recently_played),
+                                modifier = Modifier.padding(horizontal = horizontalPadding)
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = horizontalPadding),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(
+                                    items = recentSongs,
+                                    key = { "recent_${it.id}" }
+                                ) { song ->
+                                    CompactSongCard(
+                                        song = song,
+                                        isActive = song.id == activeSongId,
+                                        cardWidth = layoutSpec.compactCardWidth,
+                                        onClick = { onSongPlay(song, recentSongs) }
+                                    )
+                                }
                             }
                         }
                     }
-                }
 
-                if (homeState.recommendedSongs.isNotEmpty()) {
-                    item(key = "recommended_section") {
-                        SectionHeader(
-                            title = stringResource(R.string.section_recommended),
-                            modifier = Modifier.padding(horizontal = 20.dp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = 20.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(
-                                items = homeState.recommendedSongs,
-                                key = { "recommended_${it.id}" }
-                            ) { song ->
-                                CompactSongCard(
-                                    song = song,
-                                    isActive = song.id == activeSongId,
-                                    onClick = { onSongPlay(song, homeState.recommendedSongs) }
-                                )
+                    if (homeState.recommendedSongs.isNotEmpty()) {
+                        item(key = "recommended_section") {
+                            SectionHeader(
+                                title = stringResource(R.string.section_recommended),
+                                modifier = Modifier.padding(horizontal = horizontalPadding)
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = horizontalPadding),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(
+                                    items = homeState.recommendedSongs,
+                                    key = { "recommended_${it.id}" }
+                                ) { song ->
+                                    CompactSongCard(
+                                        song = song,
+                                        isActive = song.id == activeSongId,
+                                        cardWidth = layoutSpec.compactCardWidth,
+                                        onClick = { onSongPlay(song, homeState.recommendedSongs) }
+                                    )
+                                }
                             }
                         }
                     }
-                }
 
-                if (homeState.curatedSongs.isNotEmpty()) {
-                    item(key = "curated_header") {
-                        SectionHeader(
-                            title = stringResource(R.string.section_curated),
-                            modifier = Modifier.padding(horizontal = 20.dp)
-                        )
-                    }
-                    items(
-                        items = homeState.curatedSongs,
-                        key = { "curated_${it.id}" }
-                    ) { song ->
-                        SongListItem(
-                            song = song,
-                            isActive = song.id == activeSongId,
-                            onClick = { onSongPlay(song, homeState.curatedSongs) },
-                            modifier = Modifier.padding(horizontal = 20.dp),
-                            trailingContent = {
-                                SongRowActions(
-                                    songTitle = song.title,
-                                    isFavorite = song.id in favoriteIds,
-                                    onToggleFavorite = { onToggleFavorite(song) },
-                                    onOpenDetails = { onSongDetails(song) }
-                                )
+                    if (curatedRows.isNotEmpty()) {
+                        item(key = "curated_header") {
+                            SectionHeader(
+                                title = stringResource(R.string.section_curated),
+                                modifier = Modifier.padding(horizontal = horizontalPadding)
+                            )
+                        }
+                        items(
+                            items = curatedRows,
+                            key = { row -> "curated_row_${row.first().id}" }
+                        ) { rowSongs ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = horizontalPadding),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                rowSongs.forEach { song ->
+                                    SongListItem(
+                                        song = song,
+                                        isActive = song.id == activeSongId,
+                                        onClick = { onSongPlay(song, homeState.curatedSongs) },
+                                        modifier = Modifier.weight(1f),
+                                        trailingContent = {
+                                            SongRowActions(
+                                                songTitle = song.title,
+                                                isFavorite = song.id in favoriteIds,
+                                                onToggleFavorite = { onToggleFavorite(song) },
+                                                onOpenDetails = { onSongDetails(song) }
+                                            )
+                                        }
+                                    )
+                                }
+                                if (rowSongs.size < layoutSpec.listColumns) {
+                                    repeat(layoutSpec.listColumns - rowSongs.size) {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                    }
+                                }
                             }
-                        )
+                        }
                     }
                 }
             }
@@ -241,6 +274,6 @@ private fun SectionHeader(
         text = title,
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onBackground,
-        modifier = modifier
+        modifier = modifier.semantics { heading() }
     )
 }

@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.biancaputri.museify.R
 import com.biancaputri.museify.data.model.Song
@@ -45,7 +46,8 @@ fun FeaturedSongCard(
     song: Song,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isActive: Boolean = false
+    isActive: Boolean = false,
+    cardWidth: Dp = 248.dp
 ) {
     val artistDisplay = song.artistName.ifBlank {
         stringResource(R.string.song_details_unknown_artist)
@@ -58,7 +60,7 @@ fun FeaturedSongCard(
 
     Card(
         modifier = modifier
-            .width(248.dp)
+            .width(cardWidth)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
@@ -126,7 +128,8 @@ fun CompactSongCard(
     song: Song,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isActive: Boolean = false
+    isActive: Boolean = false,
+    cardWidth: Dp = 152.dp
 ) {
     val artistDisplay = song.artistName.ifBlank {
         stringResource(R.string.song_details_unknown_artist)
@@ -139,7 +142,7 @@ fun CompactSongCard(
 
     Card(
         modifier = modifier
-            .width(152.dp)
+            .width(cardWidth)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
@@ -240,7 +243,7 @@ fun SongListItem(
                     Text(
                         text = song.albumName,
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

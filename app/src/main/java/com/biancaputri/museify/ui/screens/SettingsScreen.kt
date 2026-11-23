@@ -2,6 +2,8 @@ package com.biancaputri.museify.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -43,11 +46,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.biancaputri.museify.BuildConfig
 import com.biancaputri.museify.R
 import com.biancaputri.museify.data.preferences.AppLanguage
 import com.biancaputri.museify.data.preferences.ThemeMode
+import com.biancaputri.museify.ui.util.computeAdaptiveLayoutSpec
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,14 +92,27 @@ fun SettingsScreen(
             )
         }
     ) { innerPadding ->
-        Column(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            val layoutSpec = computeAdaptiveLayoutSpec(
+                widthDp = maxWidth.value.toInt(),
+                heightDp = maxHeight.value.toInt()
+            )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                Column(
+                    modifier = Modifier
+                        .widthIn(max = 720.dp)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = layoutSpec.horizontalPadding, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
             SettingsSection(title = stringResource(R.string.settings_appearance_section)) {
                 Column(
                     modifier = Modifier.selectableGroup(),
@@ -215,6 +234,8 @@ fun SettingsScreen(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
         }
     }
 }
@@ -228,7 +249,8 @@ private fun SettingsSection(
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.semantics { heading() }
         )
         Spacer(modifier = Modifier.height(10.dp))
         content()
