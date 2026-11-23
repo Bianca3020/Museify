@@ -10,13 +10,15 @@
 
 ## 📸 Screenshots Aplikasi
 
-| Dashboard (Home) | Now Playing | Detail Lagu & Lisensi |
-|:---:|:---:|:---:|
-| <img src="screenshots/01_dashboard.png" width="220" /> | <img src="screenshots/02_now_playing.png" width="220" /> | <img src="screenshots/03_song_details.png" width="220" /> |
+### ☀️ Mode Terang (Light Mode — Bahasa Indonesia)
+| Beranda (Dashboard) | Sedang Diputar | Detail Lagu | Pencarian | Favorit | Pengaturan |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="screenshots/dashboard_light_id.png" width="160" /> | <img src="screenshots/nowplaying_light_id.png" width="160" /> | <img src="screenshots/songdetails_light_en.png" width="160" /> | <img src="screenshots/search_light_id.png" width="160" /> | <img src="screenshots/favorites_light_id.png" width="160" /> | <img src="screenshots/settings_light_id.png" width="160" /> |
 
-| Pencarian Musik | Lagu Favorit (Room) | Mode Terang & Gelap |
-|:---:|:---:|:---:|
-| <img src="screenshots/04_search.png" width="220" /> | <img src="screenshots/05_favorites.png" width="220" /> | <img src="screenshots/07_light_mode.png" width="220" /> |
+### 🌙 Mode Gelap (Dark Mode — English)
+| Home Dashboard | Now Playing | Song Details | Search Music | Favorites | Settings |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="screenshots/dashboard_dark_en.png" width="160" /> | <img src="screenshots/nowplaying_dark_en.png" width="160" /> | <img src="screenshots/songdetails_dark_en.png" width="160" /> | <img src="screenshots/search_dark_en.png" width="160" /> | <img src="screenshots/favorites_dark_en.png" width="160" /> | <img src="screenshots/settings_dark_id.png" width="160" /> |
 
 ---
 
