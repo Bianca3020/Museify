@@ -15,10 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -255,6 +259,45 @@ fun SongListItem(
                     modifier = Modifier.size(20.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SongRowActions(
+    songTitle: String,
+    isFavorite: Boolean,
+    onToggleFavorite: () -> Unit,
+    onOpenDetails: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = onToggleFavorite) {
+            Icon(
+                imageVector = if (isFavorite) {
+                    Icons.Rounded.Favorite
+                } else {
+                    Icons.Rounded.FavoriteBorder
+                },
+                contentDescription = stringResource(
+                    if (isFavorite) R.string.action_remove_favorite else R.string.action_add_favorite
+                ),
+                tint = if (isFavorite) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
+            )
+        }
+        IconButton(onClick = onOpenDetails) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = stringResource(R.string.cd_song_info, songTitle),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

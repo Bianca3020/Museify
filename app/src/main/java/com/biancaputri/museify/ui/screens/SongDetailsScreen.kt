@@ -18,6 +18,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material3.Button
@@ -51,8 +53,10 @@ import com.biancaputri.museify.ui.util.formatDuration
 @Composable
 fun SongDetailsScreen(
     song: Song?,
+    isFavorite: Boolean,
     onBack: () -> Unit,
     onPlayClick: (Song) -> Unit,
+    onToggleFavorite: (Song) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uriHandler = LocalUriHandler.current
@@ -139,22 +143,61 @@ fun SongDetailsScreen(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            Button(
-                onClick = { onPlayClick(song) },
-                enabled = song.hasPlayableAudio,
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.PlayArrow,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = stringResource(R.string.action_play_now))
+                Button(
+                    onClick = { onPlayClick(song) },
+                    enabled = song.hasPlayableAudio,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.PlayArrow,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = stringResource(R.string.action_play_now))
+                }
+                OutlinedButton(
+                    onClick = { onToggleFavorite(song) },
+                    modifier = Modifier.weight(1f),
+                    border = BorderStroke(
+                        1.dp,
+                        if (isFavorite) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.outline
+                        }
+                    )
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) {
+                            Icons.Rounded.Favorite
+                        } else {
+                            Icons.Rounded.FavoriteBorder
+                        },
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(
+                            if (isFavorite) {
+                                R.string.action_remove_favorite
+                            } else {
+                                R.string.action_add_favorite
+                            }
+                        ),
+                        maxLines = 1
+                    )
+                }
             }
 
             if (!song.hasPlayableAudio) {

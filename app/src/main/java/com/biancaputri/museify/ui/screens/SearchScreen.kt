@@ -12,11 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.SearchOff
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,12 +28,14 @@ import com.biancaputri.museify.ui.components.ErrorStateView
 import com.biancaputri.museify.ui.components.LoadingState
 import com.biancaputri.museify.ui.components.MuseifySearchBar
 import com.biancaputri.museify.ui.components.SongListItem
+import com.biancaputri.museify.ui.components.SongRowActions
 import com.biancaputri.museify.ui.util.toStringRes
 import com.biancaputri.museify.viewmodel.SearchUiState
 
 @Composable
 fun SearchScreen(
     searchState: SearchUiState,
+    favoriteIds: Set<String>,
     activeSongId: String?,
     onQueryChange: (String) -> Unit,
     onSearchSubmit: () -> Unit,
@@ -44,6 +43,7 @@ fun SearchScreen(
     onRetry: () -> Unit,
     onSongPlay: (Song, List<Song>) -> Unit,
     onSongDetails: (Song) -> Unit,
+    onToggleFavorite: (Song) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -120,16 +120,12 @@ fun SearchScreen(
                                 isActive = song.id == activeSongId,
                                 onClick = { onSongPlay(song, searchState.results) },
                                 trailingContent = {
-                                    IconButton(onClick = { onSongDetails(song) }) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Info,
-                                            contentDescription = stringResource(
-                                                R.string.cd_song_info,
-                                                song.title
-                                            ),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
+                                    SongRowActions(
+                                        songTitle = song.title,
+                                        isFavorite = song.id in favoriteIds,
+                                        onToggleFavorite = { onToggleFavorite(song) },
+                                        onOpenDetails = { onSongDetails(song) }
+                                    )
                                 }
                             )
                         }

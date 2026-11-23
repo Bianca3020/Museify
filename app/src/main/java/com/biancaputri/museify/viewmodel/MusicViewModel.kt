@@ -4,7 +4,10 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.biancaputri.museify.data.local.MuseifyDatabase
 import com.biancaputri.museify.data.model.Song
+import com.biancaputri.museify.data.repository.FavoritesRepository
+import com.biancaputri.museify.data.repository.FavoritesStore
 import com.biancaputri.museify.data.repository.MusicError
 import com.biancaputri.museify.data.repository.MusicRepository
 import com.biancaputri.museify.data.repository.MusicResult
@@ -20,6 +23,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -30,6 +34,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class HomeUiState(
     val isLoading: Boolean = true,
@@ -58,6 +63,7 @@ data class SearchUiState(
 class MusicViewModel(
     private val repository: MusicRepository = MusicRepository(),
     private val playerController: PlayerController? = null,
+    private val favoritesStore: FavoritesStore? = null,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     debounceMillis: Long = 400L,
     loadInitialHome: Boolean = true,
@@ -68,6 +74,7 @@ class MusicViewModel(
     constructor() : this(
         repository = MusicRepository(),
         playerController = null,
+        favoritesStore = null,
         ioDispatcher = Dispatchers.IO,
         debounceMillis = 400L,
         loadInitialHome = true,
@@ -85,6 +92,15 @@ class MusicViewModel(
     private val _recentSongs = MutableStateFlow<List<Song>>(emptyList())
     val recentSongs: StateFlow<List<Song>> = _recentSongs.asStateFlow()
 
+    private val _favoriteSongs = MutableStateFlow<List<Song>>(emptyList())
+    val favoriteSongs: StateFlow<List<Song>> = _favoriteSongs.asStateFlow()
+
+    private val _favoriteIds = MutableStateFlow<Set<String>>(emptySet())
+    val favoriteIds: StateFlow<Set<String>> = _favoriteIds.asStateFlow()
+
+    private val _favoriteError = MutableStateFlow(false)
+    val favoriteError: StateFlow<Boolean> = _favoriteError.asStateFlow()
+
     private val _selectedSong = MutableStateFlow<Song?>(null)
     val selectedSong: StateFlow<Song?> = _selectedSong.asStateFlow()
 
@@ -98,6 +114,7 @@ class MusicViewModel(
     init {
         observeDebouncedSearch(debounceMillis)
         observeActivePlaybackTrack()
+        observeFavorites()
         if (loadInitialHome) {
             loadHomeCatalog()
         }
@@ -214,15 +231,52 @@ class MusicViewModel(
         playerController?.retryCurrentTrack()
     }
 
+    fun toggleFavorite(song: Song) {
+        val store = favoritesStore ?: return
+        cacheSongs(listOf(song))
+        scope.launch {
+            val result = withContext(ioDispatcher) {
+                store.toggleFavorite(song)
+            }
+            if (result.isFailure) {
+                _favoriteError.value = true
+            }
+        }
+    }
+
+    fun dismissFavoriteError() {
+        _favoriteError.value = false
+    }
+
     fun findSongById(songId: String): Song? {
         return playbackState.value.currentSong?.takeIf { it.id == songId }
             ?: _selectedSong.value?.takeIf { it.id == songId }
+            ?: _favoriteSongs.value.firstOrNull { it.id == songId }
             ?: songCache[songId]
     }
 
     override fun onCleared() {
         playerController?.release()
         super.onCleared()
+    }
+
+    private fun observeFavorites() {
+        val store = favoritesStore ?: return
+        scope.launch {
+            store.observeFavorites()
+                .catch { _favoriteError.value = true }
+                .collect { songs ->
+                    cacheSongs(songs)
+                    _favoriteSongs.value = songs
+                }
+        }
+        scope.launch {
+            store.observeFavoriteIds()
+                .catch { _favoriteError.value = true }
+                .collect { ids ->
+                    _favoriteIds.value = ids
+                }
+        }
     }
 
     private fun observeActivePlaybackTrack() {
@@ -329,9 +383,11 @@ class MusicViewModel(
             return object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    val database = MuseifyDatabase.getInstance(appContext)
                     return MusicViewModel(
                         repository = MusicRepository(),
-                        playerController = MusicPlayerManager(appContext)
+                        playerController = MusicPlayerManager(appContext),
+                        favoritesStore = FavoritesRepository(database.favoriteDao())
                     ) as T
                 }
             }

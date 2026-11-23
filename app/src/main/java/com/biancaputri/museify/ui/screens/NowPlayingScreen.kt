@@ -21,6 +21,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.ErrorOutline
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -68,12 +70,14 @@ import com.biancaputri.museify.ui.util.formatDurationMillis
 @Composable
 fun NowPlayingScreen(
     playbackState: PlaybackUiState,
+    isFavorite: Boolean,
     onBack: () -> Unit,
     onPlayPause: () -> Unit,
     onSeek: (Long) -> Unit,
     onNext: () -> Unit,
     onPrevious: () -> Unit,
     onRetry: () -> Unit,
+    onToggleFavorite: (Song) -> Unit,
     onOpenDetails: (Song) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -113,6 +117,27 @@ fun NowPlayingScreen(
                     },
                     actions = {
                         if (song != null) {
+                            IconButton(onClick = { onToggleFavorite(song) }) {
+                                Icon(
+                                    imageVector = if (isFavorite) {
+                                        Icons.Rounded.Favorite
+                                    } else {
+                                        Icons.Rounded.FavoriteBorder
+                                    },
+                                    contentDescription = stringResource(
+                                        if (isFavorite) {
+                                            R.string.action_remove_favorite
+                                        } else {
+                                            R.string.action_add_favorite
+                                        }
+                                    ),
+                                    tint = if (isFavorite) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onBackground
+                                    }
+                                )
+                            }
                             IconButton(onClick = { onOpenDetails(song) }) {
                                 Icon(
                                     imageVector = Icons.Outlined.Info,

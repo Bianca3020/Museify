@@ -11,10 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +28,7 @@ import com.biancaputri.museify.ui.components.LoadingState
 import com.biancaputri.museify.ui.components.MuseifyBrandHeader
 import com.biancaputri.museify.ui.components.MuseifySearchTriggerBar
 import com.biancaputri.museify.ui.components.SongListItem
+import com.biancaputri.museify.ui.components.SongRowActions
 import com.biancaputri.museify.ui.util.greetingResForHour
 import com.biancaputri.museify.ui.util.toStringRes
 import com.biancaputri.museify.viewmodel.HomeUiState
@@ -41,10 +38,12 @@ import java.util.Calendar
 fun HomeScreen(
     homeState: HomeUiState,
     recentSongs: List<Song>,
+    favoriteIds: Set<String>,
     activeSongId: String?,
     onSearchClick: () -> Unit,
     onSongPlay: (Song, List<Song>) -> Unit,
     onSongDetails: (Song) -> Unit,
+    onToggleFavorite: (Song) -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -198,16 +197,12 @@ fun HomeScreen(
                             onClick = { onSongPlay(song, homeState.curatedSongs) },
                             modifier = Modifier.padding(horizontal = 20.dp),
                             trailingContent = {
-                                IconButton(onClick = { onSongDetails(song) }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Info,
-                                        contentDescription = stringResource(
-                                            R.string.cd_song_info,
-                                            song.title
-                                        ),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
+                                SongRowActions(
+                                    songTitle = song.title,
+                                    isFavorite = song.id in favoriteIds,
+                                    onToggleFavorite = { onToggleFavorite(song) },
+                                    onOpenDetails = { onSongDetails(song) }
+                                )
                             }
                         )
                     }

@@ -2,6 +2,7 @@ package com.biancaputri.museify.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
@@ -30,6 +31,11 @@ enum class MuseifyTopLevelDestination(
         route = "search",
         labelRes = R.string.nav_search,
         icon = Icons.Rounded.Search
+    ),
+    FAVORITES(
+        route = "favorites",
+        labelRes = R.string.nav_favorites,
+        icon = Icons.Rounded.Favorite
     )
 }
 
