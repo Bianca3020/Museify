@@ -1,7 +1,27 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+}
+
+fun loadJamendoClientId(): String {
+    val candidateFiles = listOf(
+        rootProject.file("secrets.properties"),
+        rootProject.file("local.properties")
+    )
+    for (file in candidateFiles) {
+        if (file.exists()) {
+            val props = Properties()
+            file.inputStream().use { props.load(it) }
+            val value = props.getProperty("JAMENDO_CLIENT_ID")?.trim().orEmpty()
+            if (value.isNotEmpty() && value != "your_jamendo_client_id_here") {
+                return value
+            }
+        }
+    }
+    return ""
 }
 
 android {
@@ -16,6 +36,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val jamendoClientId = loadJamendoClientId()
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+        buildConfigField("String", "JAMENDO_CLIENT_ID", "\"$jamendoClientId\"")
     }
 
     buildTypes {
@@ -36,6 +61,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

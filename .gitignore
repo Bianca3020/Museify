@@ -9,6 +9,7 @@ build/
 
 # Local configuration
 local.properties
+secrets.properties
 
 # Native build
 .externalNativeBuild/
