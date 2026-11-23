@@ -90,6 +90,7 @@ class MusicRepository(
             val songs = response.results
                 .orEmpty()
                 .mapNotNull { it.toSongOrNull() }
+                .distinctBy { it.id }
             MusicResult.Success(songs)
         } catch (cancelled: CancellationException) {
             throw cancelled
