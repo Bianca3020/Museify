@@ -12,6 +12,7 @@
     <!-- Greetings & Home -->
     <string name="greeting_morning">Good morning</string>
     <string name="greeting_afternoon">Good afternoon</string>
+    <string name="greeting_late_afternoon">Good evening</string>
     <string name="greeting_evening">Good evening</string>
     <string name="home_subtitle">Discover independent music streaming free via Jamendo</string>
     <string name="home_search_prompt">Search songs, artists, or genres…</string>

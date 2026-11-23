@@ -29,12 +29,17 @@ fun formatDurationMillis(durationMs: Long): String {
 
 /**
  * Resolves a localized greeting string resource for the given 24-hour clock hour.
+ * - 05:00 - 11:59: Pagi (Morning)
+ * - 12:00 - 14:59: Siang (Afternoon)
+ * - 15:00 - 18:59: Sore (Late Afternoon / Evening)
+ * - 19:00 - 04:59: Malam (Night / Evening)
  */
 @StringRes
 fun greetingResForHour(hourOfDay: Int): Int {
     return when (hourOfDay) {
         in 5..11 -> R.string.greeting_morning
-        in 12..17 -> R.string.greeting_afternoon
+        in 12..14 -> R.string.greeting_afternoon
+        in 15..18 -> R.string.greeting_late_afternoon
         else -> R.string.greeting_evening
     }
 }

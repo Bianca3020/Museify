@@ -35,7 +35,8 @@ class MusicViewModelAndFormattersTest {
     @Test
     fun greetingResForHour_mapsDayPeriodsCorrectly() {
         assertEquals(R.string.greeting_morning, greetingResForHour(8))
-        assertEquals(R.string.greeting_afternoon, greetingResForHour(14))
+        assertEquals(R.string.greeting_afternoon, greetingResForHour(13))
+        assertEquals(R.string.greeting_late_afternoon, greetingResForHour(16))
         assertEquals(R.string.greeting_evening, greetingResForHour(21))
         assertEquals(R.string.greeting_evening, greetingResForHour(2))
     }

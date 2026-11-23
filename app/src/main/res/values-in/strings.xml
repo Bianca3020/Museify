@@ -12,6 +12,7 @@
     <!-- Greetings & Home -->
     <string name="greeting_morning">Selamat pagi</string>
     <string name="greeting_afternoon">Selamat siang</string>
+    <string name="greeting_late_afternoon">Selamat sore</string>
     <string name="greeting_evening">Selamat malam</string>
     <string name="home_subtitle">Temukan musik independen gratis melalui Jamendo</string>
     <string name="home_search_prompt">Cari judul lagu, artis, atau genre…</string>
