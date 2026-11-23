@@ -59,9 +59,19 @@ enum class AppLanguage(val languageTag: String) {
 }
 
 /**
+ * Contract for reading and persisting Museify appearance and language preferences.
+ */
+interface SettingsStore {
+    val themeModeFlow: Flow<ThemeMode>
+    val languageFlow: Flow<AppLanguage>
+    suspend fun setThemeMode(themeMode: ThemeMode)
+    suspend fun setLanguage(language: AppLanguage)
+}
+
+/**
  * Persists and exposes user appearance and language preferences using Jetpack DataStore.
  */
-class SettingsDataStore(private val context: Context) {
+class SettingsDataStore(private val context: Context) : SettingsStore {
 
     private object Keys {
         val THEME_MODE = stringPreferencesKey("theme_mode")
@@ -77,21 +87,21 @@ class SettingsDataStore(private val context: Context) {
             }
         }
 
-    val themeModeFlow: Flow<ThemeMode> = safePreferencesFlow.map { preferences ->
+    override val themeModeFlow: Flow<ThemeMode> = safePreferencesFlow.map { preferences ->
         ThemeMode.fromKey(preferences[Keys.THEME_MODE])
     }
 
-    val languageFlow: Flow<AppLanguage> = safePreferencesFlow.map { preferences ->
+    override val languageFlow: Flow<AppLanguage> = safePreferencesFlow.map { preferences ->
         AppLanguage.fromTag(preferences[Keys.APP_LANGUAGE]) ?: AppLanguage.deviceDefault()
     }
 
-    suspend fun setThemeMode(themeMode: ThemeMode) {
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
         context.settingsDataStore.edit { preferences ->
             preferences[Keys.THEME_MODE] = themeMode.storageKey
         }
     }
 
-    suspend fun setLanguage(language: AppLanguage) {
+    override suspend fun setLanguage(language: AppLanguage) {
         context.settingsDataStore.edit { preferences ->
             preferences[Keys.APP_LANGUAGE] = language.languageTag
         }

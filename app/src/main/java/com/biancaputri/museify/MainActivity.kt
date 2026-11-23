@@ -6,28 +6,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import com.biancaputri.museify.data.preferences.AppLanguage
-import com.biancaputri.museify.data.preferences.SettingsDataStore
-import com.biancaputri.museify.data.preferences.ThemeMode
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.biancaputri.museify.navigation.MuseifyNavHost
 import com.biancaputri.museify.ui.theme.MuseifyTheme
 import com.biancaputri.museify.ui.theme.ProvideAppLanguage
+import com.biancaputri.museify.viewmodel.SettingsViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val settingsDataStore = remember { SettingsDataStore(applicationContext) }
-            val themeMode by settingsDataStore.themeModeFlow.collectAsState(initial = ThemeMode.SYSTEM)
-            val appLanguage by settingsDataStore.languageFlow.collectAsState(
-                initial = AppLanguage.deviceDefault()
+            val settingsViewModel: SettingsViewModel = viewModel(
+                factory = SettingsViewModel.factory(applicationContext)
             )
+            val themeMode by settingsViewModel.themeMode.collectAsState()
+            val appLanguage by settingsViewModel.appLanguage.collectAsState()
 
             MuseifyTheme(themeMode = themeMode) {
                 ProvideAppLanguage(language = appLanguage) {
-                    MuseifyNavHost()
+                    MuseifyNavHost(settingsViewModel = settingsViewModel)
                 }
             }
         }

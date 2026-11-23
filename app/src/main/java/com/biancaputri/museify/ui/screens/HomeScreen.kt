@@ -3,6 +3,7 @@ package com.biancaputri.museify.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,10 +12,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -41,6 +47,7 @@ fun HomeScreen(
     favoriteIds: Set<String>,
     activeSongId: String?,
     onSearchClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     onSongPlay: (Song, List<Song>) -> Unit,
     onSongDetails: (Song) -> Unit,
     onToggleFavorite: (Song) -> Unit,
@@ -60,7 +67,20 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)
             ) {
-                MuseifyBrandHeader()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    MuseifyBrandHeader(modifier = Modifier.weight(1f))
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(
+                            imageVector = Icons.Rounded.Settings,
+                            contentDescription = stringResource(R.string.nav_settings),
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(18.dp))
                 Text(
                     text = stringResource(greetingResForHour(currentHour)),

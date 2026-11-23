@@ -32,13 +32,16 @@ import com.biancaputri.museify.ui.screens.FavoritesScreen
 import com.biancaputri.museify.ui.screens.HomeScreen
 import com.biancaputri.museify.ui.screens.NowPlayingScreen
 import com.biancaputri.museify.ui.screens.SearchScreen
+import com.biancaputri.museify.ui.screens.SettingsScreen
 import com.biancaputri.museify.ui.screens.SongDetailsScreen
 import com.biancaputri.museify.viewmodel.MusicViewModel
+import com.biancaputri.museify.viewmodel.SettingsViewModel
 
 private object MuseifyRoutes {
     const val HOME = "home"
     const val SEARCH = "search"
     const val FAVORITES = "favorites"
+    const val SETTINGS = "settings"
     const val NOW_PLAYING = "now_playing"
     const val SONG_DETAILS = "song_details/{songId}"
 
@@ -47,6 +50,7 @@ private object MuseifyRoutes {
 
 @Composable
 fun MuseifyNavHost(
+    settingsViewModel: SettingsViewModel,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -65,6 +69,8 @@ fun MuseifyNavHost(
     val favoriteIds by musicViewModel.favoriteIds.collectAsState()
     val favoriteError by musicViewModel.favoriteError.collectAsState()
     val playbackState by musicViewModel.playbackState.collectAsState()
+    val themeMode by settingsViewModel.themeMode.collectAsState()
+    val appLanguage by settingsViewModel.appLanguage.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val dbErrorMessage = stringResource(R.string.error_database)
@@ -127,6 +133,7 @@ fun MuseifyNavHost(
                     favoriteIds = favoriteIds,
                     activeSongId = playbackState.currentSong?.id,
                     onSearchClick = { navigateToTopLevel(MuseifyTopLevelDestination.SEARCH) },
+                    onSettingsClick = { navController.navigate(MuseifyRoutes.SETTINGS) },
                     onSongPlay = { song, queue ->
                         musicViewModel.playSong(song, queue)
                     },
@@ -171,6 +178,16 @@ fun MuseifyNavHost(
                         navController.navigate(MuseifyRoutes.songDetails(song.id))
                     },
                     onToggleFavorite = musicViewModel::toggleFavorite
+                )
+            }
+
+            composable(MuseifyRoutes.SETTINGS) {
+                SettingsScreen(
+                    currentThemeMode = themeMode,
+                    currentLanguage = appLanguage,
+                    onThemeModeSelected = settingsViewModel::setThemeMode,
+                    onLanguageSelected = settingsViewModel::setLanguage,
+                    onBack = { navController.popBackStack() }
                 )
             }
 
