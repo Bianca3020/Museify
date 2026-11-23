@@ -19,6 +19,7 @@
     <string name="section_recommended">Rekomendasi Untukmu</string>
     <string name="section_curated">Kurasi Penemuan</string>
     <string name="section_recently_played">Baru Diputar</string>
+    <string name="section_recently_viewed">Baru Dilihat</string>
     <string name="home_empty_title">Belum ada lagu tersedia</string>
     <string name="home_empty_message">Tarik untuk menyegarkan atau ketuk coba lagi untuk memuat lagu dari Jamendo.</string>
 
@@ -46,6 +47,9 @@
     <string name="song_details_unknown_license">Lisensi Streaming Standar Jamendo</string>
     <string name="action_play_now">Putar Lagu</string>
     <string name="action_view_details">Detail Lagu</string>
+    <string name="action_open_jamendo">Buka di Jamendo</string>
+    <string name="action_view_license">Lihat Lisensi</string>
+    <string name="cd_song_details">Lihat detail untuk %1$s</string>
     <string name="action_add_favorite">Tambah ke Favorit</string>
     <string name="action_remove_favorite">Hapus dari Favorit</string>
 

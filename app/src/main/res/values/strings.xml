@@ -19,6 +19,7 @@
     <string name="section_recommended">Recommended for You</string>
     <string name="section_curated">Curated Discovery</string>
     <string name="section_recently_played">Recently Played</string>
+    <string name="section_recently_viewed">Recently Viewed</string>
     <string name="home_empty_title">No tracks available</string>
     <string name="home_empty_message">Pull to refresh or tap retry to load tracks from Jamendo.</string>
 
@@ -46,6 +47,9 @@
     <string name="song_details_unknown_license">Standard Jamendo Streaming License</string>
     <string name="action_play_now">Play Track</string>
     <string name="action_view_details">Track Details</string>
+    <string name="action_open_jamendo">Open on Jamendo</string>
+    <string name="action_view_license">View License</string>
+    <string name="cd_song_details">View details for %1$s</string>
     <string name="action_add_favorite">Add to Favorites</string>
     <string name="action_remove_favorite">Remove from Favorites</string>
 
