@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -51,6 +52,7 @@ import com.biancaputri.museify.ui.util.formatDuration
 fun SongDetailsScreen(
     song: Song?,
     onBack: () -> Unit,
+    onPlayClick: (Song) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uriHandler = LocalUriHandler.current
@@ -135,7 +137,37 @@ fun SongDetailsScreen(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(22.dp))
+            Spacer(modifier = Modifier.height(18.dp))
+
+            Button(
+                onClick = { onPlayClick(song) },
+                enabled = song.hasPlayableAudio,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.PlayArrow,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = stringResource(R.string.action_play_now))
+            }
+
+            if (!song.hasPlayableAudio) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = stringResource(R.string.player_unavailable_audio),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
 
             Card(
                 modifier = Modifier.fillMaxWidth(),

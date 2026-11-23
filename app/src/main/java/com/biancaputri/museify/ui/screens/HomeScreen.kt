@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,8 +41,10 @@ import java.util.Calendar
 fun HomeScreen(
     homeState: HomeUiState,
     recentSongs: List<Song>,
+    activeSongId: String?,
     onSearchClick: () -> Unit,
-    onSongClick: (Song) -> Unit,
+    onSongPlay: (Song, List<Song>) -> Unit,
+    onSongDetails: (Song) -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -117,7 +123,8 @@ fun HomeScreen(
                             ) { song ->
                                 FeaturedSongCard(
                                     song = song,
-                                    onClick = { onSongClick(song) }
+                                    isActive = song.id == activeSongId,
+                                    onClick = { onSongPlay(song, homeState.featuredSongs) }
                                 )
                             }
                         }
@@ -127,7 +134,7 @@ fun HomeScreen(
                 if (recentSongs.isNotEmpty()) {
                     item(key = "recent_section") {
                         SectionHeader(
-                            title = stringResource(R.string.section_recently_viewed),
+                            title = stringResource(R.string.section_recently_played),
                             modifier = Modifier.padding(horizontal = 20.dp)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
@@ -141,7 +148,8 @@ fun HomeScreen(
                             ) { song ->
                                 CompactSongCard(
                                     song = song,
-                                    onClick = { onSongClick(song) }
+                                    isActive = song.id == activeSongId,
+                                    onClick = { onSongPlay(song, recentSongs) }
                                 )
                             }
                         }
@@ -165,7 +173,8 @@ fun HomeScreen(
                             ) { song ->
                                 CompactSongCard(
                                     song = song,
-                                    onClick = { onSongClick(song) }
+                                    isActive = song.id == activeSongId,
+                                    onClick = { onSongPlay(song, homeState.recommendedSongs) }
                                 )
                             }
                         }
@@ -185,8 +194,21 @@ fun HomeScreen(
                     ) { song ->
                         SongListItem(
                             song = song,
-                            onClick = { onSongClick(song) },
-                            modifier = Modifier.padding(horizontal = 20.dp)
+                            isActive = song.id == activeSongId,
+                            onClick = { onSongPlay(song, homeState.curatedSongs) },
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                            trailingContent = {
+                                IconButton(onClick = { onSongDetails(song) }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Info,
+                                        contentDescription = stringResource(
+                                            R.string.cd_song_info,
+                                            song.title
+                                        ),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
                         )
                     }
                 }

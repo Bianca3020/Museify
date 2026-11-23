@@ -106,6 +106,7 @@ class MusicViewModelAndFormattersTest {
         val picked = home.featuredSongs.first()
         viewModel.selectSong(picked)
         assertEquals(picked, viewModel.findSongById(picked.id))
+        viewModel.playSong(picked)
         assertEquals(listOf(picked), viewModel.recentSongs.value)
 
         // Rapid keystrokes should debounce to a single API request

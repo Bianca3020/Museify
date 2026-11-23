@@ -17,6 +17,17 @@ fun formatDuration(durationSeconds: Int): String {
 }
 
 /**
+ * Formats a playback timestamp in milliseconds into `m:ss`.
+ */
+fun formatDurationMillis(durationMs: Long): String {
+    if (durationMs <= 0L) return "0:00"
+    val totalSeconds = (durationMs / 1000L).toInt()
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return String.format(Locale.US, "%d:%02d", minutes, seconds)
+}
+
+/**
  * Resolves a localized greeting string resource for the given 24-hour clock hour.
  */
 @StringRes

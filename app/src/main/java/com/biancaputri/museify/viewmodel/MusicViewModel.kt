@@ -1,11 +1,16 @@
 package com.biancaputri.museify.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.biancaputri.museify.data.model.Song
 import com.biancaputri.museify.data.repository.MusicError
 import com.biancaputri.museify.data.repository.MusicRepository
 import com.biancaputri.museify.data.repository.MusicResult
+import com.biancaputri.museify.player.MusicPlayerManager
+import com.biancaputri.museify.player.PlaybackUiState
+import com.biancaputri.museify.player.PlayerController
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,9 +23,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -50,6 +57,7 @@ data class SearchUiState(
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class MusicViewModel(
     private val repository: MusicRepository = MusicRepository(),
+    private val playerController: PlayerController? = null,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     debounceMillis: Long = 400L,
     loadInitialHome: Boolean = true,
@@ -59,6 +67,7 @@ class MusicViewModel(
     @Suppress("unused")
     constructor() : this(
         repository = MusicRepository(),
+        playerController = null,
         ioDispatcher = Dispatchers.IO,
         debounceMillis = 400L,
         loadInitialHome = true,
@@ -79,11 +88,16 @@ class MusicViewModel(
     private val _selectedSong = MutableStateFlow<Song?>(null)
     val selectedSong: StateFlow<Song?> = _selectedSong.asStateFlow()
 
+    private val fallbackPlaybackState = MutableStateFlow(PlaybackUiState())
+    val playbackState: StateFlow<PlaybackUiState>
+        get() = playerController?.playbackState ?: fallbackPlaybackState.asStateFlow()
+
     private val searchTriggerFlow = MutableStateFlow(SearchTrigger(query = ""))
     private val songCache = LinkedHashMap<String, Song>()
 
     init {
         observeDebouncedSearch(debounceMillis)
+        observeActivePlaybackTrack()
         if (loadInitialHome) {
             loadHomeCatalog()
         }
@@ -171,13 +185,64 @@ class MusicViewModel(
     fun selectSong(song: Song) {
         cacheSongs(listOf(song))
         _selectedSong.value = song
-        _recentSongs.update { existing ->
-            (listOf(song) + existing.filterNot { it.id == song.id }).take(10)
-        }
+    }
+
+    fun playSong(song: Song, queue: List<Song> = listOf(song)) {
+        cacheSongs(queue)
+        selectSong(song)
+        recordRecentSong(song)
+        playerController?.playSong(song, queue)
+    }
+
+    fun togglePlayPause() {
+        playerController?.togglePlayPause()
+    }
+
+    fun seekTo(positionMs: Long) {
+        playerController?.seekTo(positionMs)
+    }
+
+    fun playNext() {
+        playerController?.playNext()
+    }
+
+    fun playPrevious() {
+        playerController?.playPrevious()
+    }
+
+    fun retryPlayback() {
+        playerController?.retryCurrentTrack()
     }
 
     fun findSongById(songId: String): Song? {
-        return _selectedSong.value?.takeIf { it.id == songId } ?: songCache[songId]
+        return playbackState.value.currentSong?.takeIf { it.id == songId }
+            ?: _selectedSong.value?.takeIf { it.id == songId }
+            ?: songCache[songId]
+    }
+
+    override fun onCleared() {
+        playerController?.release()
+        super.onCleared()
+    }
+
+    private fun observeActivePlaybackTrack() {
+        val controller = playerController ?: return
+        scope.launch {
+            controller.playbackState
+                .map { it.currentSong }
+                .filterNotNull()
+                .distinctUntilChanged { old, new -> old.id == new.id }
+                .collect { song ->
+                    cacheSongs(listOf(song))
+                    recordRecentSong(song)
+                }
+        }
+    }
+
+    private fun recordRecentSong(song: Song) {
+        _recentSongs.update { existing ->
+            (listOf(song) + existing.filterNot { it.id == song.id }).take(10)
+        }
     }
 
     private fun observeDebouncedSearch(debounceMillis: Long) {
@@ -256,5 +321,20 @@ class MusicViewModel(
         data object Loading : SearchEmission
         data class Loaded(val songs: List<Song>) : SearchEmission
         data class Failed(val error: MusicError) : SearchEmission
+    }
+
+    companion object {
+        fun factory(context: Context): ViewModelProvider.Factory {
+            val appContext = context.applicationContext
+            return object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return MusicViewModel(
+                        repository = MusicRepository(),
+                        playerController = MusicPlayerManager(appContext)
+                    ) as T
+                }
+            }
+        }
     }
 }

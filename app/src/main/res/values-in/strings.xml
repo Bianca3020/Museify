@@ -65,6 +65,8 @@
     <string name="player_playback_error">Tidak dapat memutar lagu ini. Silakan coba lagi atau pilih lagu lain.</string>
     <string name="cd_album_artwork">Sampul album untuk %1$s</string>
     <string name="cd_open_now_playing">Buka layar Sedang Diputar</string>
+    <string name="cd_song_info">Detail lagu untuk %1$s</string>
+    <string name="player_playing_now">Memutar</string>
 
     <!-- Favorites -->
     <string name="favorites_title">Lagu Favoritmu</string>

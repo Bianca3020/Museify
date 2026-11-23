@@ -40,10 +40,16 @@ import com.biancaputri.museify.ui.util.formatDuration
 fun FeaturedSongCard(
     song: Song,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isActive: Boolean = false
 ) {
     val artistDisplay = song.artistName.ifBlank {
         stringResource(R.string.song_details_unknown_artist)
+    }
+    val borderColor = if (isActive) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.outlineVariant
     }
 
     Card(
@@ -54,7 +60,7 @@ fun FeaturedSongCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        border = BorderStroke(if (isActive) 1.5.dp else 1.dp, borderColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Box(
@@ -115,10 +121,16 @@ fun FeaturedSongCard(
 fun CompactSongCard(
     song: Song,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isActive: Boolean = false
 ) {
     val artistDisplay = song.artistName.ifBlank {
         stringResource(R.string.song_details_unknown_artist)
+    }
+    val borderColor = if (isActive) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.outlineVariant
     }
 
     Card(
@@ -129,7 +141,7 @@ fun CompactSongCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        border = BorderStroke(if (isActive) 1.5.dp else 1.dp, borderColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
@@ -168,10 +180,16 @@ fun SongListItem(
     song: Song,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isActive: Boolean = false,
     trailingContent: @Composable (() -> Unit)? = null
 ) {
     val artistDisplay = song.artistName.ifBlank {
         stringResource(R.string.song_details_unknown_artist)
+    }
+    val borderColor = if (isActive) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.outlineVariant
     }
 
     Card(
@@ -182,7 +200,7 @@ fun SongListItem(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        border = BorderStroke(if (isActive) 1.5.dp else 1.dp, borderColor)
     ) {
         Row(
             modifier = Modifier

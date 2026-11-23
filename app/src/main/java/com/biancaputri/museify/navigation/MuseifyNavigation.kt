@@ -1,6 +1,7 @@
 package com.biancaputri.museify.navigation
 
 import android.net.Uri
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -9,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -17,9 +19,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.biancaputri.museify.ui.components.MiniPlayer
 import com.biancaputri.museify.ui.components.MuseifyBottomBar
 import com.biancaputri.museify.ui.components.MuseifyTopLevelDestination
 import com.biancaputri.museify.ui.screens.HomeScreen
+import com.biancaputri.museify.ui.screens.NowPlayingScreen
 import com.biancaputri.museify.ui.screens.SearchScreen
 import com.biancaputri.museify.ui.screens.SongDetailsScreen
 import com.biancaputri.museify.viewmodel.MusicViewModel
@@ -27,6 +31,7 @@ import com.biancaputri.museify.viewmodel.MusicViewModel
 private object MuseifyRoutes {
     const val HOME = "home"
     const val SEARCH = "search"
+    const val NOW_PLAYING = "now_playing"
     const val SONG_DETAILS = "song_details/{songId}"
 
     fun songDetails(songId: String): String = "song_details/${Uri.encode(songId)}"
@@ -34,9 +39,13 @@ private object MuseifyRoutes {
 
 @Composable
 fun MuseifyNavHost(
-    modifier: Modifier = Modifier,
-    musicViewModel: MusicViewModel = viewModel()
+    modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val musicViewModel: MusicViewModel = viewModel(
+        factory = MusicViewModel.factory(context)
+    )
+
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -44,8 +53,10 @@ fun MuseifyNavHost(
     val homeState by musicViewModel.homeState.collectAsState()
     val searchState by musicViewModel.searchState.collectAsState()
     val recentSongs by musicViewModel.recentSongs.collectAsState()
+    val playbackState by musicViewModel.playbackState.collectAsState()
 
     val showBottomBar = MuseifyTopLevelDestination.entries.any { it.route == currentRoute }
+    val showMiniPlayer = showBottomBar && playbackState.currentSong != null
 
     val navigateToTopLevel: (MuseifyTopLevelDestination) -> Unit = { destination ->
         navController.navigate(destination.route) {
@@ -61,11 +72,22 @@ fun MuseifyNavHost(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            if (showBottomBar) {
-                MuseifyBottomBar(
-                    currentRoute = currentRoute,
-                    onNavigate = navigateToTopLevel
-                )
+            if (showBottomBar || showMiniPlayer) {
+                Column {
+                    if (showMiniPlayer) {
+                        MiniPlayer(
+                            playbackState = playbackState,
+                            onPlayPauseClick = musicViewModel::togglePlayPause,
+                            onClick = { navController.navigate(MuseifyRoutes.NOW_PLAYING) }
+                        )
+                    }
+                    if (showBottomBar) {
+                        MuseifyBottomBar(
+                            currentRoute = currentRoute,
+                            onNavigate = navigateToTopLevel
+                        )
+                    }
+                }
             }
         }
     ) { innerPadding ->
@@ -80,8 +102,12 @@ fun MuseifyNavHost(
                 HomeScreen(
                     homeState = homeState,
                     recentSongs = recentSongs,
+                    activeSongId = playbackState.currentSong?.id,
                     onSearchClick = { navigateToTopLevel(MuseifyTopLevelDestination.SEARCH) },
-                    onSongClick = { song ->
+                    onSongPlay = { song, queue ->
+                        musicViewModel.playSong(song, queue)
+                    },
+                    onSongDetails = { song ->
                         musicViewModel.selectSong(song)
                         navController.navigate(MuseifyRoutes.songDetails(song.id))
                     },
@@ -92,11 +118,31 @@ fun MuseifyNavHost(
             composable(MuseifyRoutes.SEARCH) {
                 SearchScreen(
                     searchState = searchState,
+                    activeSongId = playbackState.currentSong?.id,
                     onQueryChange = musicViewModel::onSearchQueryChanged,
                     onSearchSubmit = musicViewModel::submitSearch,
                     onClearSearch = musicViewModel::clearSearch,
                     onRetry = musicViewModel::retrySearch,
-                    onSongClick = { song ->
+                    onSongPlay = { song, queue ->
+                        musicViewModel.playSong(song, queue)
+                    },
+                    onSongDetails = { song ->
+                        musicViewModel.selectSong(song)
+                        navController.navigate(MuseifyRoutes.songDetails(song.id))
+                    }
+                )
+            }
+
+            composable(MuseifyRoutes.NOW_PLAYING) {
+                NowPlayingScreen(
+                    playbackState = playbackState,
+                    onBack = { navController.popBackStack() },
+                    onPlayPause = musicViewModel::togglePlayPause,
+                    onSeek = musicViewModel::seekTo,
+                    onNext = musicViewModel::playNext,
+                    onPrevious = musicViewModel::playPrevious,
+                    onRetry = musicViewModel::retryPlayback,
+                    onOpenDetails = { song ->
                         musicViewModel.selectSong(song)
                         navController.navigate(MuseifyRoutes.songDetails(song.id))
                     }
@@ -111,7 +157,11 @@ fun MuseifyNavHost(
                 val song = musicViewModel.findSongById(songId)
                 SongDetailsScreen(
                     song = song,
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    onPlayClick = { target ->
+                        musicViewModel.playSong(target, listOf(target))
+                        navController.navigate(MuseifyRoutes.NOW_PLAYING)
+                    }
                 )
             }
         }
