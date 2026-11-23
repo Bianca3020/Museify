@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.SearchOff
@@ -84,30 +86,48 @@ fun SearchScreen(
             Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 when {
                     searchState.query.isBlank() && !searchState.hasSearched -> {
-                        EmptyStateView(
-                            title = stringResource(R.string.search_initial_title),
-                            message = stringResource(R.string.search_initial_subtitle),
-                            icon = Icons.Rounded.Search,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState()),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            EmptyStateView(
+                                title = stringResource(R.string.search_initial_title),
+                                message = stringResource(R.string.search_initial_subtitle),
+                                icon = Icons.Rounded.Search
+                            )
+                        }
                     }
                     searchState.isLoading -> {
                         LoadingState(modifier = Modifier.align(Alignment.Center))
                     }
                     searchState.error != null -> {
-                        ErrorStateView(
-                            message = stringResource(searchState.error.toStringRes()),
-                            onRetry = onRetry,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState()),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            ErrorStateView(
+                                message = stringResource(searchState.error.toStringRes()),
+                                onRetry = onRetry
+                            )
+                        }
                     }
                     searchState.isEmpty -> {
-                        EmptyStateView(
-                            title = stringResource(R.string.search_empty_title),
-                            message = stringResource(R.string.search_empty_message),
-                            icon = Icons.Rounded.SearchOff,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState()),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            EmptyStateView(
+                                title = stringResource(R.string.search_empty_title),
+                                message = stringResource(R.string.search_empty_message),
+                                icon = Icons.Rounded.SearchOff
+                            )
+                        }
                     }
                     layoutSpec.listColumns > 1 -> {
                         LazyVerticalGrid(
